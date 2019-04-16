@@ -43,6 +43,10 @@ int main() {
           // j[1] is the data JSON object
           vector<double> ptsx = j[1]["ptsx"];
           vector<double> ptsy = j[1]["ptsy"];
+          // what' ptsx and ptsy; vector of points
+          // std::cout << "ptsx: " << ptsx[0] << std::endl;
+          // std::cout << "ptsy: " << ptsy[0] << std::endl;
+
           double px = j[1]["x"];
           double py = j[1]["y"];
           double psi = j[1]["psi"];
@@ -54,7 +58,7 @@ int main() {
            */
           vector<double> waypoints_x;
           vector<double> waypoints_y;
-          for (int i = 0; i < ptsx.size(); i++) {
+          for (unsigned int i = 0; i < ptsx.size(); i++) {
             double dx = ptsx[i] - px;
             double dy = ptsy[i] - py;
             waypoints_x.push_back(dx * cos(-psi) - dy * sin(-psi));
@@ -68,12 +72,13 @@ int main() {
 
           auto coeffs = polyfit(waypoints_x_eig, waypoints_y_eig, 3);
           double cte = polyeval(coeffs, 0);  // px = 0, py = 0
-          double epsi = -atan(coeffs[1]);  // p
+          double epsi = - atan(coeffs[1]); // TODO right? -f'(x)
 
           double steer_value;
           double throttle_value;
 
           Eigen::VectorXd state(6);
+          // state << px, py, psi, v, cte, epsi;
           state << 0, 0, 0, v, cte, epsi;
           auto vars = mpc.Solve(state, coeffs);
           steer_value = vars[0];
@@ -95,7 +100,7 @@ int main() {
            *   the vehicle's coordinate system the points in the simulator are
            *   connected by a Green line
            */
-          for (int i = 2; i < vars.size(); i ++) {
+          for (unsigned int i = 2; i < vars.size(); i ++) {
             // TODO vars.size even number? where vars?
               if (i%2 == 0) {
                 mpc_x_vals.push_back(vars[i]);
@@ -117,7 +122,7 @@ int main() {
            *   the vehicle's coordinate system the points in the simulator are
            *   connected by a Yellow line
            */
-          for (double i = 0; i < 100; i += 3){
+          for (int i = 0; i < 100; i += 3){
             next_x_vals.push_back(i);
             next_y_vals.push_back(polyeval(coeffs, i));
           }
