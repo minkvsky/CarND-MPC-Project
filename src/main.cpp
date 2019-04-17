@@ -46,6 +46,7 @@ int main() {
           // what' ptsx and ptsy; vector of points
           // std::cout << "ptsx: " << ptsx[0] << std::endl;
           // std::cout << "ptsy: " << ptsy[0] << std::endl;
+          // TODO how to cout vector?
 
           double px = j[1]["x"];
           double py = j[1]["y"];
@@ -69,9 +70,12 @@ int main() {
           double* ptry = &waypoints_y[0];
           Eigen::Map<Eigen::VectorXd> waypoints_x_eig(ptrx, 6);
           Eigen::Map<Eigen::VectorXd> waypoints_y_eig(ptry, 6);
+          // TODO what's map; A matrix or vector expression mapping an existing array of data.not copy;seem slice;call by reference？
+          // why 6?
+          std::cout << "waypoints_x_eig: " << waypoints_x_eig.size() << std::endl;
 
           auto coeffs = polyfit(waypoints_x_eig, waypoints_y_eig, 3);
-          double cte = polyeval(coeffs, 0);  // px = 0, py = 0
+          double cte = polyeval(coeffs, 0);  // px = 0, py = 0 TODO why zero?
           double epsi = - atan(coeffs[1]); // TODO right? -f'(x)
 
           double steer_value;
@@ -79,7 +83,7 @@ int main() {
 
           Eigen::VectorXd state(6);
           // state << px, py, psi, v, cte, epsi;
-          state << 0, 0, 0, v, cte, epsi;
+          state << 0, 0, 0, v, cte, epsi; // psi 0?
           auto vars = mpc.Solve(state, coeffs);
           steer_value = vars[0];
           throttle_value = vars[1];
@@ -89,7 +93,8 @@ int main() {
           //   steering value back. Otherwise the values will be in between
           //   [-deg2rad(25), deg2rad(25] instead of [-1, 1].
           msgJson["steering_angle"] = steer_value/(deg2rad(25));
-          msgJson["throttle"] = throttle_value;
+          msgJson["throttle"] = throttle_value;// TODO why so small and negative?
+          // TODO how to log this value and then analysis?
 
           // Display the MPC predicted trajectory
           vector<double> mpc_x_vals;
