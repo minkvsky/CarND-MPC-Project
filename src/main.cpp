@@ -72,7 +72,7 @@ int main() {
           Eigen::Map<Eigen::VectorXd> waypoints_y_eig(ptry, 6);
           // TODO what's map; A matrix or vector expression mapping an existing array of data.not copy;seem slice;call by reference？
           // why 6?
-          std::cout << "waypoints_x_eig: " << waypoints_x_eig.size() << std::endl;
+          // std::cout << "waypoints_x_eig: " << waypoints_x_eig.size() << std::endl;
 
           auto coeffs = polyfit(waypoints_x_eig, waypoints_y_eig, 3);
           double cte = polyeval(coeffs, 0);  // px = 0, py = 0 TODO why zero?
