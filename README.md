@@ -3,6 +3,48 @@ Self-Driving Car Engineer Nanodegree Program
 
 ---
 
+## The Model
+
+### state
+
+- Position of the vehicle : *(x, y)*
+- Orientation of the vehicle : *ψ*
+- Velocity, as the vehicle is moving: *v*
+
+## actuators
+
+- Steering wheel : represented as the steering angle *($ \delta$)*
+- Throttle pedal : represented as acceleration *(a)*
+- Brake pedal : represented as negative of acceleration *(-a)*
+
+### cost
+
+- Cross Track Error : the error between the center of the road and vehicle’s position *(cte)*
+- Orientation Error : the difference between the vehicle’s orientation and the trajectory orientation *(eψ)*
+
+
+### update equations
+
+![image-20190418081050055](/Users/etone/Library/Application Support/typora-user-images/image-20190418081050055.png)
+
+
+
+## Timestep Length and Elapsed Duration (N & dt)
+
+- Horizon *(T)*: total duration for which future predictions are made . *T* is the product of two other variables, *N* and *dt* (*T* = *N* * *dt*). This should be as large as reasonably possible.
+
+- Number of Timesteps *(N)*: total number of timesteps in the horizon. *dt* is how much time elapses between actuations. This determines the total variables that the MPC will need to go through to optimize and thus determines the computational cost.
+
+- Timestep Duration *(dt)*: how long does it take between two successive actuations. Larger values of *dt* result in less frequent actuations, which makes it harder to accurately approximate a continuous reference trajectory. This should be as small as possible to maintain accuracy in following a reference trajectory.
+
+- *N*, *dt*, and *T* are hyperparameters needed to tune for each model predictive controller. However, there are some general guidelines. *T* should be as large as possible, while *dt* should be as small as possible, and T determines the total variables for MPC optimizition which determines the computational cost (T should be as small as possible).A good approach to setting *N*, *dt*, and *T* is to first determine a reasonable range for *T* and then tune *dt*and *N* appropriately, keeping the effect of each in mind.
+
+## Polynomial Fitting and MPC Preprocessing
+
+Localize the waypoints to simplify calculations. We transform waypoints from global coordinates to local coordinates so that we can consider the current state as px = 0, py = 0, and psi = 0 (car's perspective). 
+
+## Model Predictive Control with Latency
+
 ## Dependencies
 
 * cmake >= 3.5

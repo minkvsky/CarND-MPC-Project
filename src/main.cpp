@@ -57,6 +57,9 @@ int main() {
            * TODO: Calculate steering angle and throttle using MPC.
            * Both are in between [-1, 1].
            */
+          // transform waypoints to be from car's perspective
+          // global to local so that we can consider the current state as px = 0, py = 0, and psi = 0
+          // localizate to simplify calculations
           vector<double> waypoints_x;
           vector<double> waypoints_y;
           for (unsigned int i = 0; i < ptsx.size(); i++) {
@@ -71,19 +74,18 @@ int main() {
           Eigen::Map<Eigen::VectorXd> waypoints_x_eig(ptrx, 6);
           Eigen::Map<Eigen::VectorXd> waypoints_y_eig(ptry, 6);
           // TODO what's map; A matrix or vector expression mapping an existing array of data.not copy;seem slice;call by reference？
-          // why 6?
           // std::cout << "waypoints_x_eig: " << waypoints_x_eig.size() << std::endl;
 
           auto coeffs = polyfit(waypoints_x_eig, waypoints_y_eig, 3);
-          double cte = polyeval(coeffs, 0);  // px = 0, py = 0 TODO why zero?
-          double epsi = - atan(coeffs[1]); // TODO right? -f'(x)
+          double cte = polyeval(coeffs, 0);  // beacause px = 0, py = 0 TODO why zero?localization
+          double epsi = - atan(coeffs[1]); // because px = psi = 0
 
           double steer_value;
           double throttle_value;
 
           Eigen::VectorXd state(6);
           // state << px, py, psi, v, cte, epsi;
-          state << 0, 0, 0, v, cte, epsi; // psi 0?
+          state << 0, 0, 0, v, cte, epsi; 
           auto vars = mpc.Solve(state, coeffs);
           steer_value = vars[0];
           throttle_value = vars[1];
